@@ -6,6 +6,10 @@ import tempfile
 from PIL import Image
 import matplotlib.pyplot as plt
 import easyocr
+import pandas as pd
+import re
+import pandas as pd
+import re
 from streamlit_drawable_canvas import st_canvas
 
 # ---------------- PAGE CONFIG ----------------
@@ -537,36 +541,139 @@ elif menu == "🔢 Multi-Digit OCR":
     st.subheader("🔢 Multi-Digit OCR Recognition")
 
     uploaded_file = st.file_uploader(
-        "Upload image containing multiple digits or text",
+        "Upload form / notice image",
         type=["png", "jpg", "jpeg"]
     )
 
     if uploaded_file is not None:
         image = Image.open(uploaded_file)
-        st.image(image, caption="OCR Input Image", use_container_width=True)
+        st.image(image, caption="Uploaded Image", use_container_width=True)
 
         if auto_predict:
-            with st.spinner("EasyOCR is detecting text..."):
+            with st.spinner("Reading and structuring data..."):
                 img_array = np.array(image)
-                results = ocr_reader.readtext(img_array)
+
+                gray = cv2.cvtColor(img_array, cv2.COLOR_RGB2GRAY)
+                gray = cv2.resize(gray, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+                gray = cv2.fastNlMeansDenoising(gray, None, 30, 7, 21)
+
+                results = ocr_reader.readtext(
+                    gray,
+                    detail=1,
+                    paragraph=False,
+                    contrast_ths=0.05,
+                    adjust_contrast=0.7,
+                    text_threshold=0.4,
+                    low_text=0.3
+                )
 
             if results:
+                raw_items = []
+
+                for bbox, text, conf in results:
+                    x = int(min([p[0] for p in bbox]))
+                    y = int(min([p[1] for p in bbox]))
+
+                    raw_items.append({
+                        "text": text.strip(),
+                        "confidence": round(conf * 100, 2),
+                        "x": x,
+                        "y": y
+                    })
+
+                raw_items = sorted(raw_items, key=lambda d: (d["y"], d["x"]))
+
+                raw_df = pd.DataFrame([
+                    {
+                        "Detected Text": item["text"],
+                        "Confidence (%)": item["confidence"]
+                    }
+                    for item in raw_items
+                ])
+
+                texts = [item["text"] for item in raw_items]
+
+                def clean_text(t):
+                    return re.sub(r"[^a-zA-Z0-9\s\-_/.:]", "", t).strip()
+
+                def find_after_label(labels):
+                    for i, text in enumerate(texts):
+                        current = clean_text(text).lower()
+
+                        for label in labels:
+                            if label.lower() in current:
+                                # Case 1: value is in same text
+                                value = current.replace(label.lower(), "").strip()
+                                if value:
+                                    return value.title()
+
+                                # Case 2: value is in next few OCR outputs
+                                for j in range(i + 1, min(i + 5, len(texts))):
+                                    nxt = clean_text(texts[j])
+
+                                    if nxt and nxt.lower() not in [
+                                        "ward", "zone", "owner name",
+                                        "new property no", "old property no",
+                                        "taxable value", "proposed tax",
+                                        "notice date"
+                                    ]:
+                                        return nxt
+
+                    return "Not Detected"
+
+                def find_number_after_label(labels):
+                    value = find_after_label(labels)
+                    nums = re.findall(r"\d+", value)
+                    return nums[0] if nums else value
+
+                structured_data = {
+                    "Owner Name": find_after_label(["Owner Name", "Owner"]),
+                    "Ward": find_number_after_label(["Ward"]),
+                    "Zone": find_after_label(["Zone"]),
+                    "New Property No": find_after_label(["New Property No", "New Property"]),
+                    "Old Property No": find_after_label(["Old Property No", "Old Property"]),
+                    "Taxable Value": find_number_after_label(["Taxable Value", "Taxable"]),
+                    "Proposed Tax": find_number_after_label(["Proposed Tax", "Tax"]),
+                    "Notice Date": find_after_label(["Notice Date", "Date"])
+                }
+
+                structured_df = pd.DataFrame(
+                    structured_data.items(),
+                    columns=["Field", "Extracted Value"]
+                )
+
+                avg_conf = raw_df["Confidence (%)"].mean()
+
                 st.success("OCR Detection Completed")
 
-                for bbox, text, confidence in results:
-                    st.markdown('<div class="card">', unsafe_allow_html=True)
-                    st.write(f"**Detected Text:** {text}")
-                    st.write(f"**Confidence:** {confidence * 100:.2f}%")
-                    st.markdown('</div>', unsafe_allow_html=True)
+                st.markdown("### 📊 OCR Summary")
+                col1, col2, col3 = st.columns(3)
+                col1.metric("Total Detected Text", len(raw_df))
+                col2.metric("Average Confidence", f"{avg_conf:.2f}%")
+                col3.metric("Structured Fields", len(structured_df))
 
-                    st.session_state.history.append({
-                        "Source": "Multi-Digit OCR",
-                        "Prediction": text,
-                        "Confidence": round(confidence * 100, 2)
-                    })
+                st.markdown("### ✅ Structured Extracted Data")
+                st.dataframe(structured_df, use_container_width=True)
+
+                st.download_button(
+                    "⬇️ Download Structured Data CSV",
+                    structured_df.to_csv(index=False),
+                    "structured_ocr_data.csv",
+                    "text/csv"
+                )
+
+                st.markdown("### 📋 Raw OCR Text")
+                st.dataframe(raw_df, use_container_width=True)
+
+                st.download_button(
+                    "⬇️ Download Raw OCR Data CSV",
+                    raw_df.to_csv(index=False),
+                    "raw_ocr_data.csv",
+                    "text/csv"
+                )
+
             else:
-                st.warning("No text or digit detected.")
-
+                st.warning("No text detected. Try a clearer, straight image.")
 # ---------------- RESOURCES ----------------
 elif menu == "📚 Resources":
 

@@ -810,4 +810,4 @@ elif "OCR" in menu:
             st.warning("No text detected in the image.")
 
 st.markdown("---")
-st.markdown("Developed by **Uzzair Sheikh** | CNN + TensorFlow + Streamlit + OCR")
+st.markdown("Developed by **kanhaiya pathak** | CNN + TensorFlow + Streamlit + OCR")

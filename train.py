@@ -1,8 +1,14 @@
+import os
+
+os.makedirs("models", exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
+
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
-import os
+
+print("Training started...")
 
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 

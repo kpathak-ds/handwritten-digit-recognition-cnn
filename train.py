@@ -1,21 +1,12 @@
+import os
+
+os.makedirs("models", exist_ok=True)
+os.makedirs("outputs", exist_ok=True)
+
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
 
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-datagen = ImageDataGenerator(
-    rotation_range=15,
-    zoom_range=0.15,
-    width_shift_range=0.1,
-    height_shift_range=0.1
-)
-
-model.fit(
-    datagen.flow(x_train, y_train, batch_size=32),
-    epochs=10,
-    validation_data=(x_test, y_test)
-)
 print("Training started...")
 
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()

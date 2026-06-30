@@ -13,7 +13,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import easyocr
 from streamlit_drawable_canvas import st_canvas
-
+st.write("APP STARTED")
 # ─── Page config ────────────────────────────────────────────────
 st.set_page_config(
     page_title="NeuralScript · Digit AI",
@@ -438,6 +438,8 @@ def load_ocr_reader():
 model     = load_digit_model()
 ocr_reader = load_ocr_reader()
 
+st.write("Model loaded")
+
 # ─── Helpers ───────────────────────────────────────────────────
 def preprocess_image(image):
     image = image.convert("L")
@@ -682,6 +684,7 @@ if "Overview" in menu:
       </div>
     </div>
     """, unsafe_allow_html=True)
+    
 
     st.markdown('<div class="sec-heading"><div class="sec-heading-line"></div><div class="sec-heading-label">🖼 Input Modes</div><div class="sec-heading-line"></div></div>', unsafe_allow_html=True)
     st.markdown("""

@@ -1,5 +1,11 @@
 import streamlit as st
+
+st.title("Application Started")
+
+st.write("Step 1 completed")
 import tensorflow as tf
+
+st.write("TensorFlow imported")
 import numpy as np
 import cv2
 import tempfile
@@ -420,6 +426,7 @@ def inject_css(theme):
 inject_css(st.session_state.theme)
 
 # ─── Models ────────────────────────────────────────────────────
+
 @st.cache_resource
 def load_digit_model():
     return tf.keras.models.load_model("models/digit_model.h5")
@@ -808,6 +815,8 @@ elif "OCR" in menu:
                         cc[j % 10].markdown(f"<div class='result-box' style='padding:0.5rem;'><div style='font-size:1.6rem;font-family:JetBrains Mono,monospace;font-weight:700;background:linear-gradient(135deg,#7c6af7,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'>{ch}</div></div>", unsafe_allow_html=True)
         else:
             st.warning("No text detected in the image.")
+reader = easyocr.Reader(['en'])
 
+st.write("EasyOCR loaded")
 st.markdown("---")
 st.markdown("Developed by **Kanhaiya Pathak** | CNN + TensorFlow + Streamlit + OCR")

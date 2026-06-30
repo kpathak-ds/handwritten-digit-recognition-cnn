@@ -1,3 +1,5 @@
+st.write("APP STARTED")
+st.write("STEP 1")
 import streamlit as st
 
 st.title("Application Started")
@@ -13,7 +15,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import easyocr
 from streamlit_drawable_canvas import st_canvas
-st.write("APP STARTED")
+model = load_digit_model()
+st.write("STEP 2")
 # ─── Page config ────────────────────────────────────────────────
 st.set_page_config(
     page_title="NeuralScript · Digit AI",
@@ -805,7 +808,7 @@ elif "OCR" in menu:
         image = Image.open(uploaded_file)
         st.image(image, caption="Input image", use_container_width=True)
         img_array = np.array(image)
-        with st.spinner("Running EasyOCR…"):
+        with st.spinner("Loading OCR and processing image..."):
             results = ocr_reader.readtext(img_array)
         if results:
             st.success(f"Found **{len(results)}** text region(s)")
@@ -818,8 +821,8 @@ elif "OCR" in menu:
                         cc[j % 10].markdown(f"<div class='result-box' style='padding:0.5rem;'><div style='font-size:1.6rem;font-family:JetBrains Mono,monospace;font-weight:700;background:linear-gradient(135deg,#7c6af7,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'>{ch}</div></div>", unsafe_allow_html=True)
         else:
             st.warning("No text detected in the image.")
-reader = easyocr.Reader(['en'])
+ocr_reader = load_ocr_reader()
+st.write("OCR LOADED")
 
-st.write("EasyOCR loaded")
 st.markdown("---")
 st.markdown("Developed by **Kanhaiya Pathak** | CNN + TensorFlow + Streamlit + OCR")

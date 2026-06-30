@@ -8,35 +8,7 @@ import matplotlib.pyplot as plt
 import easyocr
 from streamlit_drawable_canvas import st_canvas
 
-st.write("APP STARTED")
-st.write("TensorFlow imported")
 
-
-@st.cache_resource
-def load_digit_model():
-    return tf.keras.models.load_model(
-        "models/digit_model.h5"
-    )
-
-
-@st.cache_resource
-def load_ocr_reader():
-    return easyocr.Reader(['en'])
-
-
-st.write("STEP 1 - Loading CNN")
-
-model = load_digit_model()
-
-st.write("STEP 2 - Model Loaded")
-
-st.write("STEP 3 - Loading OCR")
-
-ocr_reader = load_ocr_reader()
-
-st.write("STEP 4 - OCR Loaded")
-
-st.title("Application Started")
 # ─── Page config ────────────────────────────────────────────────
 st.set_page_config(
    page_title="Kanhaiya Pathak · Digit AI",
@@ -461,7 +433,7 @@ def load_ocr_reader():
 model     = load_digit_model()
 ocr_reader = load_ocr_reader()
 
-st.write("Model loaded")
+
 
 # ─── Helpers ───────────────────────────────────────────────────
 def preprocess_image(image):
@@ -543,7 +515,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("**Navigate**")
-    menu = st.radio("", [
+    menu = st.radio("Navigation Menu", [
         "🏠  Overview",
         "🖼  Upload Image",
         "📷  Camera",
@@ -567,7 +539,6 @@ if "Overview" in menu:
     <div class="hero-wrap">
       <div class="hero-eyebrow">✦ Deep Learning · Computer Vision</div>
       <h1 class="hero-title">Handwritten <span>Digit Recognition</span><br>powered by CNN</h1>
-      <p class="hero-sub">Upload an image, draw a number, or point your camera — the model reads your handwriting in real time with 99 %+ accuracy on MNIST.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -721,7 +692,7 @@ if "Overview" in menu:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="footer">Built by <span>Kanhaiya Pathak</span> · NeuralScript v1.0 · CNN + TensorFlow + EasyOCR + Streamlit</div>', unsafe_allow_html=True)
+
 
 # ─── UPLOAD IMAGE ──────────────────────────────────────────────
 elif "Upload Image" in menu:
@@ -841,8 +812,6 @@ elif "OCR" in menu:
                         cc[j % 10].markdown(f"<div class='result-box' style='padding:0.5rem;'><div style='font-size:1.6rem;font-family:JetBrains Mono,monospace;font-weight:700;background:linear-gradient(135deg,#7c6af7,#4fc3f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;'>{ch}</div></div>", unsafe_allow_html=True)
         else:
             st.warning("No text detected in the image.")
-ocr_reader = load_ocr_reader()
-st.write("OCR LOADED")
 
-st.markdown("---")
-st.markdown("Developed by **Kanhaiya Pathak** | CNN + TensorFlow + Streamlit + OCR")
+
+

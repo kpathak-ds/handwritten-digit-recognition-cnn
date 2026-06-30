@@ -39,7 +39,7 @@ st.write("STEP 4 - OCR Loaded")
 st.title("Application Started")
 # ─── Page config ────────────────────────────────────────────────
 st.set_page_config(
-    page_title="NeuralScript · Digit AI",
+   page_title="Kanhaiya Pathak · Digit AI",
     page_icon="🧠",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -529,7 +529,7 @@ def result_panel(digit, confidence):
 
 # ─── Sidebar ───────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown('<div class="sidebar-logo">NeuralScript</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-logo">Kanhaiya Pathak</div>', unsafe_allow_html=True)
     st.markdown('<div class="sidebar-tagline">Digit Recognition AI</div>', unsafe_allow_html=True)
 
     # Theme toggle

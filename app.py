@@ -688,7 +688,7 @@ if "Overview" in menu:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="footer">Built by <span>Uzzair Sheikh</span> · NeuralScript v1.0 · CNN + TensorFlow + EasyOCR + Streamlit</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer">Built by <span>Kanhaiya Pathak</span> · NeuralScript v1.0 · CNN + TensorFlow + EasyOCR + Streamlit</div>', unsafe_allow_html=True)
 
 # ─── UPLOAD IMAGE ──────────────────────────────────────────────
 elif "Upload Image" in menu:

@@ -1,13 +1,5 @@
-st.write("APP STARTED")
-st.write("STEP 1")
 import streamlit as st
-
-st.title("Application Started")
-
-st.write("Step 1 completed")
 import tensorflow as tf
-
-st.write("TensorFlow imported")
 import numpy as np
 import cv2
 import tempfile
@@ -15,8 +7,36 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import easyocr
 from streamlit_drawable_canvas import st_canvas
+
+st.write("APP STARTED")
+st.write("TensorFlow imported")
+
+
+@st.cache_resource
+def load_digit_model():
+    return tf.keras.models.load_model(
+        "models/digit_model.h5"
+    )
+
+
+@st.cache_resource
+def load_ocr_reader():
+    return easyocr.Reader(['en'])
+
+
+st.write("STEP 1 - Loading CNN")
+
 model = load_digit_model()
-st.write("STEP 2")
+
+st.write("STEP 2 - Model Loaded")
+
+st.write("STEP 3 - Loading OCR")
+
+ocr_reader = load_ocr_reader()
+
+st.write("STEP 4 - OCR Loaded")
+
+st.title("Application Started")
 # ─── Page config ────────────────────────────────────────────────
 st.set_page_config(
     page_title="NeuralScript · Digit AI",

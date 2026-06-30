@@ -5,7 +5,7 @@ os.makedirs("outputs", exist_ok=True)
 
 import tensorflow as tf
 from tensorflow.keras import layers, models
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator  # type: ignore
 import matplotlib.pyplot as plt
 
 print("Training started...")

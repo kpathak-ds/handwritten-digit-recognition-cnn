@@ -20,6 +20,8 @@ st.set_page_config(
 # ─── Theme toggle via session state ─────────────────────────────
 if "theme" not in st.session_state:
     st.session_state.theme = "dark"
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "🏠  Overview"
 
 # ─── CSS ────────────────────────────────────────────────────────
 def inject_css(theme):
@@ -505,24 +507,40 @@ with st.sidebar:
     st.markdown('<div class="sidebar-tagline">Digit Recognition AI</div>', unsafe_allow_html=True)
 
     # Theme toggle
+    def set_theme_light():
+        st.session_state.theme = "light"
+
+    def set_theme_dark():
+        st.session_state.theme = "dark"
+
     col_a, col_b = st.columns(2)
     with col_a:
-        if st.button("☀️ Light", use_container_width=True):
-            st.session_state.theme = "light"; st.rerun()
+        st.button("☀️ Light", use_container_width=True, on_click=set_theme_light)
     with col_b:
-        if st.button("🌙 Dark", use_container_width=True):
-            st.session_state.theme = "dark"; st.rerun()
+        st.button("🌙 Dark", use_container_width=True, on_click=set_theme_dark)
 
     st.markdown("---")
     st.markdown("**Navigate**")
-    menu = st.radio("Navigation Menu", [
+    pages = [
         "🏠  Overview",
         "🖼  Upload Image",
         "📷  Camera",
         "🎥  Video",
         "✏️  Draw Canvas",
         "🔢  Multi-Digit OCR"
-    ], label_visibility="collapsed")
+    ]
+    try:
+        default_index = pages.index(st.session_state.current_page)
+    except ValueError:
+        default_index = 0
+
+    menu = st.radio(
+        "Navigation Menu",
+        pages,
+        index=default_index,
+        label_visibility="collapsed"
+    )
+    st.session_state.current_page = menu
 
     st.markdown("---")
     st.markdown(f"""
